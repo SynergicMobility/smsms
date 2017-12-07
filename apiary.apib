@@ -3,7 +3,71 @@ HOST: http://polls.apiblueprint.org/
 
 # Synergic Mobility Service Management System
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Service Management System for Synergic Mobility
+
+
+## Post Demand [/api/client/demands/add]
+
+### Add pick up human demand [POST]
+
++ Response 200 (application/json)
+
+        [
+            {
+                service:
+                {
+                    needs_user_id:1,
+                    needs_type:"passenger",
+                    from:{
+                        name:"幸田駅",
+                        address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
+                        lon:34.859583,
+                        lat:137.164640,
+                        time:"2017-12-02T12:01:03+09:00"
+                    },
+                    to:{
+                        name:"安楽寺",
+                        address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
+                        lon:34.859091,
+                        lat:137.172021
+                    },
+                    passengers: [
+                        {type:"adult"},
+                        {type:"adult"},
+                        {type:"child"}
+                    ],
+                    cargos:[
+                        {size:"big", owner_user_id:1},
+                        {size:"big", owner_user_id:1},
+                        {size:"small", owner_user_id:1}
+                    ],
+                    funtions:["sharing", "remote_meeting", "movie"]
+                }
+            }
+        ]
+        
+## Get Car Status [/api/client/needs/find_vehicle]
+
+Should use socket.io API 
+
+### Find selected vehicle [POST]
+
++ Response 200 (application/json)
+
+        [
+            {
+                status:"OK",
+                results:{
+                    vehicle_id:10,
+                    lon:34.5463583,
+                    lat:137.244540,
+                    orientation:75, //北向きは0、東90、南180、西270
+                    vehicle_id:1,
+                    model:"白いトヨタプリウス",
+                    plate:"幸田001あ001"
+                }
+            }
+        ]
 
 ## Questions Collection [/questions]
 
@@ -34,6 +98,7 @@ Polls is a simple API allowing consumers to view polls and vote in them.
         ]
 
 ### Create a New Question [POST]
+
 
 You may create your own question using this action. It takes a JSON
 object containing a question and a collection of answers in the
