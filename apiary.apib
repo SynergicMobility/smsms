@@ -6,11 +6,30 @@ HOST: http://polls.apiblueprint.org/
 Service Management System for Synergic Mobility
 
 
-## Post Demand [/api/client/demands/add]
+## Authentication [/api/client/account/login]
+
+### Login [POST]
+
++ Request (application/json)
+
+        [
+            {
+            }
+        ]
+
++ Response 200 (application/json)
+
+        [
+            {
+            }
+        ]
+
+
+## Post Service Demand [/api/client/demands/add]
 
 ### Add pick up human demand [POST]
 
-+ Response 200 (application/json)
++ Request (application/json)
 
         [
             {
@@ -26,7 +45,7 @@ Service Management System for Synergic Mobility
                         time:"2017-12-02T12:01:03+09:00"
                     },
                     to:{
-                        name:"安楽寺",
+                        name:"安楽寺",くえｓ
                         address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
                         lon:34.859091,
                         lat:137.172021
@@ -43,14 +62,92 @@ Service Management System for Synergic Mobility
                     ],
                     funtions:["sharing", "remote_meeting", "movie"]
                 }
+            },
+            {
+                service:
+                {
+                    needs_user_id:1,
+                    needs_type:"freight",
+                    from:{
+                        name:"幸田駅",
+                        address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
+                        lon:34.859583,
+                        lat:137.164640,
+                        time:"2017-12-02T12:01:03+09:00"
+                    },
+                    to:{
+                        name:"安楽寺",
+                        address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
+                        lon:34.859091,
+                        lat:137.172021
+                    },
+                    passengers: [],
+                    cargos:[
+                        {size:"big", owner_user_id:3},
+                        {size:"small", owner_user_id:3}
+                    ],
+                    funtions:["express"]
+                }
+            }
+        ]
+
++ Response 201 (application/json)
+
+        [
+             {
+                needs_user_id:1,
+                needs_type:"passenger",
+                needs_id:1324, //システムに生成された需要ID
+                from:{
+                    name:"幸田駅",
+                    address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
+                    lon:34.859583,
+                    lat:137.164640,
+                    time:"2017-12-02T12:01:03+09:00",
+                    estimated_time:"2017-12-02T12:03:12+09:00" //予想発車時間
+                },
+                estimated_distance:1538, //予想距離メートル
+                route:[　//スマホ地図表示用
+                    {lon:34.5463583,lat:137.244540},
+                    {lon:34.7578583,lat:137.356740}
+                ],
+                to:{
+                    name:"安楽寺",
+                    address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
+                    lon:34.859091,
+                    lat:137.172021,
+                    estimated_time:"2017-12-02T12:46:27+09:00"　//予想到着時間
+                },
+                vehicle:{ //利用車両
+                    vehicle_id:1,
+                    model:"白いトヨタプリュス",
+                    plate:"幸田001あ001",
+                },
+                passengers: [
+                    {type:"adult"},
+                    {type:"adult"},
+                    {type:"child"}
+                ],
+                cargos:[
+                    {size:"big", owner_user_id:1},
+                    {size:"big", owner_user_id:1},
+                    {size:"small", owner_user_id:1}
+                ],
+                prices:[　//予算値段
+                    {type:"passager", price:4720},
+                    {type:"freight", price:1200}
+                ],
+                funtions:["sharing", "remote_meeting", "movie"]
             }
         ]
         
-## Get Car Status [/api/client/needs/find_vehicle]
+## Get Car Status [/api/client/needs/find_vehicle?vehicle_id={vehicle_id}]
 
 Should use socket.io API 
 
 ### Find selected vehicle [POST]
++ Parameters
+    + vehicle_id (number) - ID of query vehicle
 
 + Response 200 (application/json)
 
@@ -68,78 +165,3 @@ Should use socket.io API
                 }
             }
         ]
-
-## Questions Collection [/questions]
-
-### List All Questions [GET]
-
-+ Response 200 (application/json)
-
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
-
-    + Body
-
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
