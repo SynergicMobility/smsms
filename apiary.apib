@@ -140,10 +140,60 @@ Service Management System for Synergic Mobility
                 funtions:["sharing", "remote_meeting", "movie"]
             }
         ]
+    
+## Vehicle [/api/vehicle/getall]
+### Get All Vehicles Status [GET]
+This API gets all vehicles status including id, plate, status(empty, service, park, inspection) and current coordinates and orientation.
+Notice: speed is m/s, orientation is in [0, 360) accoroding to 0 for north, 90 for east, 180 for south, 270 for west.
+
++ Response 200 (application/json)
+
+        {
+            "status": "OK",
+            "results": {
+                "viecles": [
+                    {
+                        "id": 1,
+                        "plate": "名古屋001あ001",
+                        "lat": 34.8662067,
+                        "lon": 137.1747431,
+                        "speed": 8.0,
+                        "status": "empty",
+                        "orientation": 34.640134193748565,
+                        "description": "赤いプリウスα"
+                    },
+                    {
+                        "id": 2,
+                        "plate": "名古屋002あ002",
+                        "lat": 34.833674242857136,
+                        "lon": 137.18120877142854,
+                        "speed": 8.0,
+                        "status": "empty",
+                        "orientation": 127.38996608290856,
+                        "description": "白いプリウス"
+                    },
+                    {
+                        "id": 3,
+                        "plate": "名古屋003あ003",
+                        "lat": 34.8464821,
+                        "lon": 137.1492482,
+                        "speed": 8.0,
+                        "status": "empty",
+                        "orientation": 311.0317849232839,
+                        "description": "黄色プリウスα"
+                    }
+                ]
+            }
+        }
         
+    
 ## Get Car Status [/api/client/needs/find_vehicle?vehicle_id={vehicle_id}]
 
 Should use socket.io API 
+
+ 
+
+
 
 ### Find selected vehicle [POST]
 + Parameters
