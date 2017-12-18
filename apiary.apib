@@ -62,6 +62,7 @@ Service Management System for Synergic Mobility
 </code>
 
 # Web Socket
+## User Login
 
 
 ## Web Socket [/io]
@@ -157,16 +158,98 @@ Everything in following popup.
             }
         }
 
-## Post Service Demand [/api/client/demands/add]
++ Request Action: Get viecle status once
+
+        {
+            act:"getvieclestatus", //required
+        }
+
++ Response 0
+
+        {
+            "code": 0,
+            "act": "vieclestatus",
+            "results": {
+                "viecles": [
+                    {
+                        "id": 1,
+                        "plate": "名古屋021あ021",
+                        "lat": 34.845131636363625,
+                        "lon": 137.16038205454552,
+                        "speed": 8.0,
+                        "status": "empty",
+                        "orientation": 84.30252574402982,
+                        "description": "黄色プリウスα",
+                        "route": {
+                              "dep": {
+                                "lat": 34.84498235454545,
+                                "lon": 137.15869463636363
+                              },
+                              "des": {
+                                "lat": 34.874715,
+                                "lon": 137.158208
+                              },
+                              "distance": 4046.5607667015584,
+                              "route": [
+                                {
+                                  "lat": 34.8450053,
+                                  "lon": 137.159016,
+                                  "distance": 0,
+                                  "rate": 0.0
+                                },
+                                {
+                                  "lat": 34.8450932,
+                                  "lon": 137.1599968,
+                                  "distance": 29.50193567961456,
+                                  "rate": 0.007290619709057834
+                                }
+                              ]
+                        }
+                    }
+                ]
+            }
+        }
+
++ Request Action: Start Pushing Viecle Status
+
+        {
+            act:"startpushingvieclestatus", //required
+            interval:1 //push every [0.1, 5] seconds 
+        }
+
++ Response 0
+
+        {
+            "code": 0,
+            "act": "startpushingvieclestatus",
+            "results": {
+            }
+        }
+
++ Request Action: Stop Pushing Viecle Status
+
+        {
+            act:"stoppushingvieclestatus" //required
+        }
++ Response 0
+
+        {
+            "code": 0,
+            "act": "stoppushingvieclestatus",
+            "results": {
+            }
+        }
+
+## Post Service Demand [/api/client/demands/add?token={token}]
 
 ### Add pick up human demand [POST]
-
++ Parameters
+    + token (string) - User login token
 + Request (application/json)
-
-    
 
         [
             {
+                token:"DdQJ3uz8MDwncPO9p7ATolgEvSzYFr0V",
                 service:
                 {
                     needs_user_id:1,
@@ -198,6 +281,7 @@ Everything in following popup.
                 }
             },
             {
+                token:"DdQJ3uz8MDwncPO9p7ATolgEvSzYFr0V",
                 service:
                 {
                     needs_user_id:1,
@@ -275,118 +359,101 @@ Everything in following popup.
             }
         ]
     
-## Vehicle [/api/vehicle/getall]
+## Get All Vehicles Status [/api/vehicle/getall?token={token}]
 ### Get All Vehicles Status [GET]
 This API gets all vehicles status including id, plate, status(empty, service, park, inspection) and current coordinates and orientation.
 Notice: speed is m/s, orientation is in [0, 360) accoroding to 0 for north, 90 for east, 180 for south, 270 for west.
++ Parameters
+    + token (string) - User login token
++ Response 200 (application/json)
 
+        {
+            "code": 0,
+            "results": {
+                "viecles": [
+                    {
+                        "id": 1,
+                        "plate": "名古屋021あ021",
+                        "lat": 34.845131636363625,
+                        "lon": 137.16038205454552,
+                        "speed": 8.0,
+                        "status": "empty",
+                        "orientation": 84.30252574402982,
+                        "description": "黄色プリウスα",
+                        "route": {
+                              "dep": {
+                                "lat": 34.84498235454545,
+                                "lon": 137.15869463636363
+                              },
+                              "des": {
+                                "lat": 34.874715,
+                                "lon": 137.158208
+                              },
+                              "distance": 4046.5607667015584,
+                              "route": [
+                                {
+                                  "lat": 34.8450053,
+                                  "lon": 137.159016,
+                                  "distance": 0,
+                                  "rate": 0.0
+                                },
+                                {
+                                  "lat": 34.8450932,
+                                  "lon": 137.1599968,
+                                  "distance": 29.50193567961456,
+                                  "rate": 0.007290619709057834
+                                }
+                              ]
+                        }
+                    }
+                ]
+            }
+        }
+
+## Get One Vehicles Status by Id [/api/vehicle/get?token={token}&id={id}]
+### Get One Vehicles Status by Id [GET]
++ Parameters
+    + token (string) - User login token
+    + id (int) - viecle id
 + Response 200 (application/json)
 
         {
             "status": "OK",
             "results": {
-                "viecles": [
-                    "viecles": [
-                      {
+                "viecle": {
                         "id": 1,
-                        "plate": "名古屋001あ001",
-                        "lat": 34.87526049156628,
-                        "lon": 137.16552240858414,
+                        "plate": "名古屋021あ021",
+                        "lat": 34.845131636363625,
+                        "lon": 137.16038205454552,
                         "speed": 8.0,
                         "status": "empty",
-                        "orientation": 154.70354697968315,
-                        "description": "赤いプリウスα",
+                        "orientation": 84.30252574402982,
+                        "description": "黄色プリウスα",
                         "route": {
-                          "dep": {
-                            "lat": 34.87680720000001,
-                            "lon": 137.16479139999996
-                          },
-                          "des": {
-                            "lat": 34.8321544,
-                            "lon": 137.1858953
-                          },
-                          "distance": 5316.361547126242,
-                          "route": [
-                            {
-                              "lat": 34.87680720000001,
-                              "lon": 137.16479139999996,
-                              "distance": 0.0,
-                              "rate": 0.0
-                            },
-                            {
-                              "lat": 34.8321544,
-                              "lon": 137.1858953,
-                              "distance": 5316.361547126242,
-                              "rate": 1.0
-                            }
-                          ]
+                              "dep": {
+                                "lat": 34.84498235454545,
+                                "lon": 137.15869463636363
+                              },
+                              "des": {
+                                "lat": 34.874715,
+                                "lon": 137.158208
+                              },
+                              "distance": 4046.5607667015584,
+                              "route": [
+                                {
+                                  "lat": 34.8450053,
+                                  "lon": 137.159016,
+                                  "distance": 0,
+                                  "rate": 0.0
+                                },
+                                {
+                                  "lat": 34.8450932,
+                                  "lon": 137.1599968,
+                                  "distance": 29.50193567961456,
+                                  "rate": 0.007290619709057834
+                                }
+                              ]
                         }
-                      },
-                        {
-                        "id": 2,
-                        "plate": "名古屋002あ002",
-                        "lat": 34.848411457857175,
-                        "lon": 137.16758549214282,
-                        "speed": 8.0,
-                        "status": "empty",
-                        "orientation": 310.82432700457895,
-                        "description": "白いプリウス",
-                        "route": {
-                          "dep": {
-                            "lat": 34.84721127142857,
-                            "lon": 137.1689747285714
-                          },
-                          "des": {
-                            "lat": 34.871215,
-                            "lon": 137.14119
-                          },
-                          "distance": 3680.570857741996,
-                          "route": [
-                            {
-                              "lat": 34.84721127142857,
-                              "lon": 137.1689747285714,
-                              "distance": 0.0,
-                              "rate": 0.0
-                            },
-                            {
-                              "lat": 34.871215,
-                              "lon": 137.14119,
-                              "distance": 3680.570857741996,
-                              "rate": 1.0
-                            }
-                          ]
-                        }
-                      }
-                ]
+                    }
             }
         }
-        
-    
-## Get Car Status [/api/client/needs/find_vehicle?vehicle_id={vehicle_id}]
-
-Should use socket.io API 
-
- 
-
-
-
-### Find selected vehicle [POST]
-+ Parameters
-    + vehicle_id (number) - ID of query vehicle
-
-+ Response 200 (application/json)
-
-        [
-            {
-                status:"OK",
-                results:{
-                    vehicle_id:10,
-                    lon:34.5463583,
-                    lat:137.244540,
-                    orientation:75, //北向きは0、東90、南180、西270
-                    vehicle_id:1,
-                    model:"白いトヨタプリウス",
-                    plate:"幸田001あ001"
-                }
-            }
-        ]
