@@ -5,6 +5,25 @@ HOST: http://polls.apiblueprint.org/
 
 Service Management System for Synergic Mobility
 
+## Status Code List
+
+- Return code in response
+    |code|model / act|Description|
+    | -------- | ------- | ------- |
+    |0|ALL|Success|
+    |-1|login|Username is not exists|
+    |-2|login|Password is wrong|
+    |-3|login|User is not active|
+    |-4|register|User is already exists|
+    |-5|register|Password is too weak|
+    |-6|register|Username is Null|
+    |-7|register|Password is Null|
+    |-8|register|Password is Null|
+    |-9|ALL|Token is expired|
+    |-10|ALL|User is not logging in|
+    |-11|ALL|No permission for this operation|
+    
+
 
 ## Authentication [/api/client/account/login]
 
