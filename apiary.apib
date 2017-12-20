@@ -121,6 +121,29 @@ Then it will be sent to fleet.
             }
         }
 
+## SIO Change Demand Route [/sms/io/changedemandroute]
+Change Demand Route includes go another place and debus.
+If debus, just send the current location.
+
+### Change Demand Route [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            demand_id:1,
+            to:{lat: 34.741091, lon: 137.251021},
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"changedemandroute",
+            results:{
+                demand_id:1
+            }
+        }
         
 # Group sms->fleet
 
@@ -151,7 +174,7 @@ Then it will be sent to fleet.
         }
         
         
-## SIO Cancel Demand sms->fleet [/fleet/io/canceldemand]
+## SIO Cancel Demand [/fleet/io/canceldemand]
 ### Cancel Demand [PUT]
 
 + Request (json)
@@ -171,7 +194,7 @@ Then it will be sent to fleet.
             }
         }
         
-## SIO Depart client->sms [/sms/io/depart]
+## SIO Depart [/sms/io/depart]
 When vehicle is waiting status, phone send depart to SMS and Fleet
 
 ### Depart [PUT]
@@ -189,7 +212,7 @@ When vehicle is waiting status, phone send depart to SMS and Fleet
             None
         }
 
-## SIO Depart sms->fleet [/sleet/io/depart]
+## SIO Depart [/sleet/io/depart]
 
 ### Depart [PUT]
 
@@ -205,32 +228,9 @@ When vehicle is waiting status, phone send depart to SMS and Fleet
         {
             None
         }
-        
-## SIO Change Demand Route client->sms [/sms/io/changedemandroute]
-Change Demand Route includes go another place and debus.
-If debus, just send the current location.
+    
 
-### Change Demand Route [PUT]
-
-+ Request (json)
-
-        {
-            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
-            demand_id:1,
-            to:{lat: 34.741091, lon: 137.251021},
-        }
-        
-+ Response 0
-
-        {
-            code:0,
-            act:"changedemandroute",
-            results:{
-                demand_id:1
-            }
-        }
-
-## SIO Change Demand Route sms->fleet [/fleet/io/changedemandroute]
+## SIO Change Demand Route [/fleet/io/changedemandroute]
 Change Demand Route includes go another place and debus.
 If debus, just send the current location.
 
@@ -254,9 +254,9 @@ If debus, just send the current location.
             }
         }
 
+#Group fleet->sms
 
-
-## SIO Viecle Status fleet->sms & fleet->client [/sms/io/viecle_status]
+## SIO Viecle Status fleet->sms & fleet->client [/io/viecle_status]
 Monitor viecles in SMS, and send viecle status to client
 
 ### Viecle Status [PUT]
@@ -301,3 +301,5 @@ Monitor viecles in SMS, and send viecle status to client
         {
             None
         }
+        
+#Group fleet->client
