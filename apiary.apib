@@ -34,6 +34,24 @@ Service Management System for Synergic Mobility
     <tr><td>4</td><td>ARRIVING</td><td>到着</td></tr>
 <table/>
 
+# Passenger Type List
+
+<table>
+    <tr><th>Passenger Type</th><th>Description</th></tr>
+    <tr><td>adult</td><td></td></tr>
+    <tr><td>child</td><td></td></tr>
+    <tr><td>baby</td><td></td></tr>
+<table/>
+
+# Service Type List
+
+<table>
+    <tr><th>Service Type</th><th>Description</th></tr>
+    <tr><td>share-ride</td><td>Allow share a car with others</td></tr>
+    <tr><td>private-ride</td><td>Express</td></tr>
+    <tr><td>movie</td><td>PATROL</td></tr>
+<table/>
+
 ## SIO Login client->sms [/sms/io/login]
 ### User Login (Get Token) [PUT]
 + Request (json)
@@ -65,7 +83,8 @@ Then it will be sent to fleet.
             token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
             from:{lat: 34.859583, lon: 137.164640},
             to:{lat: 34.859091, lon: 137.172021},
-            passengers:[{type:"adult"}]
+            passengers:[{type:"adult"}],
+            services:[{type:"share-ride"},{type:"movie"}] //private-ride
         }
         
 + Response 0
@@ -74,7 +93,7 @@ Then it will be sent to fleet.
             code:0,
             act:"builtdemand",
             results:{
-                demand_id:1
+                demand_id:1 //important
             }
         }
 
@@ -84,12 +103,12 @@ Then it will be sent to fleet.
 + Request (json)
 
         {
-            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
-            demand_id:1,
-            user_id:1,
+            key:"W90gbO9DBKWbMiLYv8hp5FUuC22W9a7W",
             from:{lat: 34.859583, lon: 137.164640},
             to:{lat: 34.859091, lon: 137.172021},
-            passengers:[{type:"adult"}]
+            passengers:[{type:"adult"}],
+            services:[{type:"share-ride"},{type:"movie"}], //private-ride
+            demand_id:1
         }
         
 + Response 0
@@ -99,7 +118,6 @@ Then it will be sent to fleet.
             act:"demand",
             results:{
                 vehicle_id:1,
-                user_id:1,
                 demand_id:1
             }
         }
@@ -236,7 +254,7 @@ Monitor viecles in SMS, and send viecle status to client
 + Request (json)
 
         {
-            "key":
+            
             "vehicles": [
                 {
                     "vehicle_id": 1,
