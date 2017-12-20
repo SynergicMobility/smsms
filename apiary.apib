@@ -34,7 +34,7 @@ Service Management System for Synergic Mobility
     <tr><td>4</td><td>ARRIVING</td><td>到着</td></tr>
 <table/>
 
-## login client->sms [/sms/io/login]
+## SIO Login client->sms [/sms/io/login]
 ### User Login (Get Token) [PUT]
 + Request (json)
 
@@ -120,7 +120,7 @@ Then it will be sent to fleet.
             code:0,
             act:"canceldemand",
             results:{
-                vehicle_id:1
+                demand_id:1
             }
         }
         
@@ -142,6 +142,24 @@ Then it will be sent to fleet.
             results:{
                 demand_id:1
             }
+        }
+        
+## SIO Depart client->sms client->fleet [/sms/io/depart]
+When vehicle is waiting status, phone send depart to SMS and Fleet
+
+### Depart [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            demand_id:1
+        }
+        
++ Response 0
+
+        {
+            None
         }
         
 ## SIO Change Demand Route client->sms [/sms/io/changedemandroute]
@@ -177,7 +195,7 @@ If debus, just send the current location.
 + Request (json)
 
         {
-            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
             demand_id:1,
             to:{lat: 34.741091, lon: 137.251021},
         }
@@ -185,7 +203,7 @@ If debus, just send the current location.
 + Response 0
 
         {
-            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
+            code:0,
             act:"changedemandroute",
             results:{
                 demand_id:1
@@ -193,8 +211,9 @@ If debus, just send the current location.
         }
 
 
-## SIO Viecle Status fleet->sms [/sms/io/viecle_status]
-Monitor viecles in SMS
+
+## SIO Viecle Status fleet->sms & fleet->client [/sms/io/viecle_status]
+Monitor viecles in SMS, and send viecle status to client
 
 ### Viecle Status [PUT]
 + Request (json)
@@ -211,7 +230,8 @@ Monitor viecles in SMS
                     "status": 0, //see vehcle status codes
                     "orientation": 0.6651332923552786,
                     "description": "黄色プリウスα",
-                    "demand_ids":[]
+                    "demand_ids":[],
+                    "route":[] //dont show route when patrol (status == 0)
                 },
                 {
                     "vehicle_id": 2,
@@ -219,436 +239,21 @@ Monitor viecles in SMS
                     "lat": 34.89015292727274,
                     "lon": 137.17468727272725,
                     "speed": 8,
-                    "status": 1,
+                    "status": 1, //noteiced: not patrol here so demand_ids exists
                     "orientation": 342.308506993808,
                     "description": "赤いプリウスα",
-                    "demand_ids":[1] //what demends are taking now
+                    "demand_ids":[1], //what demends are taking now
+                    "route":[
+                        [lat, lon, status_code],
+                        [lat, lon, status_code],
+                        [lat, lon, status_code]
+                    ] //send route with status_code
                 }
             ]
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## The following is draft ! [/io]
-
-
-Web socket has only one address(URL).
-Everything in following popup.
-
-### Web Socket [PUT]
-
-+ Request Action: User Login (json)
-
-        {
-            act:"login", //required
-            username:"username", //required
-            password:"password", //required
-            token_life:36000 //optional; default=36000; range=[0, 3600*12*30]; The lifecycle (second) of token
-        }
         
 + Response 0
-
-        {
-            code:0,
-            act:"login",
-            results:{
-                token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
-                username:"username",
-                firstname:"Tarou",
-                lastname:"meidai",
-                email:"tarou@synergicmobility.com",
-                group:"person", //user group ["person", "company", "admin"]
-                register_date:"2017-11-30",
-                token_life:35991
-            }
-        }
-        
-+ Request Action: Token renew and update #optional (json)
-
-        {
-            act:"token_update",
-            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W"
-            token_life:36000, //optional; default=36000; range=[0, 3600*12*30]; The lifecycle (second) of token
-            is_update:false //is response a new token? default=False
-        }
-
-+ Response 0
-
-        {
-            code:0,
-            act:"token_update",
-            results:{
-                token:"DdQJ3uz8MDwncPO9p7ATolgEvSzYFr0V",
-                token_life:35991
-            }
-        }
-
-+ Request Action: Register a new user
-
-        {
-            act:"register", //required
-            username:"username", //required
-            password:"password", //required
-            firstname:"Tarou", //optional;
-            lastname:"meidai", //optional;
-            email:"tarou@synergicmobility.com", //optional;
-            group:"person", //optional;
-        }
-
-+ Response 0
-
-        {
-            code:0,
-            act:"register",
-            results:{
-                
-            }
-        }
-        
-+ Request Action: Change password
         
         {
-            act:"changepassword", //required
-            username:"username", //required
-            password:"password", //required
-            newpassword:"newpassword" // required
-        }
-        
-+ Response 0
-
-        {
-            code:0,
-            act:"changepassword",
-            results:{
-                
-            }
-        }
-
-+ Request Action: Get viecle status once
-
-        {
-            act:"getvieclestatus", //required
-        }
-
-+ Response 0
-
-        {
-            "code": 0,
-            "act": "vieclestatus",
-            "results": {
-                "viecles": [
-                    {
-                        "id": 1,
-                        "plate": "名古屋021あ021",
-                        "lat": 34.845131636363625,
-                        "lon": 137.16038205454552,
-                        "speed": 8.0,
-                        "status": "empty",
-                        "orientation": 84.30252574402982,
-                        "description": "黄色プリウスα",
-                        "route": {
-                              "dep": {
-                                "lat": 34.84498235454545,
-                                "lon": 137.15869463636363
-                              },
-                              "des": {
-                                "lat": 34.874715,
-                                "lon": 137.158208
-                              },
-                              "distance": 4046.5607667015584,
-                              "route": [
-                                {
-                                  "lat": 34.8450053,
-                                  "lon": 137.159016,
-                                  "distance": 0,
-                                  "rate": 0.0
-                                },
-                                {
-                                  "lat": 34.8450932,
-                                  "lon": 137.1599968,
-                                  "distance": 29.50193567961456,
-                                  "rate": 0.007290619709057834
-                                }
-                              ]
-                        }
-                    }
-                ]
-            }
-        }
-
-+ Request Action: Start Pushing Viecle Status
-
-        {
-            act:"startpushingvieclestatus", //required
-            interval:1 //push every [0.1, 5] seconds 
-        }
-
-+ Response 0
-
-        {
-            "code": 0,
-            "act": "startpushingvieclestatus",
-            "results": {
-            }
-        }
-
-+ Request Action: Stop Pushing Viecle Status
-
-        {
-            act:"stoppushingvieclestatus" //required
-        }
-+ Response 0
-
-        {
-            "code": 0,
-            "act": "stoppushingvieclestatus",
-            "results": {
-            }
-        }
-
-## Post Service Demand [/api/client/demands/add?token={token}]
-
-### Add pick up human demand [POST]
-+ Parameters
-    + token (string) - User login token
-+ Request (application/json)
-
-        [
-            {
-                token:"DdQJ3uz8MDwncPO9p7ATolgEvSzYFr0V",
-                service:
-                {
-                    user_id:1,
-                    from:{
-                        name:"幸田駅",
-                        address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
-                        lon:34.859583,
-                        lat:137.164640,
-                        time:"2017-12-02T12:01:03+09:00"
-                    },
-                    to:{
-                        name:"安楽寺",くえｓ
-                        address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
-                        lon:34.859091,
-                        lat:137.172021
-                    },
-                    passengers: [
-                        {type:"adult"},
-                        {type:"adult"},
-                        {type:"child"}
-                    ],
-                    cargos:[
-                        {size:"big", owner_user_id:1},
-                        {size:"big", owner_user_id:1},
-                        {size:"small", owner_user_id:1}
-                    ],
-                    services:["sharing", "remote_meeting", "movie"]
-                }
-            },
-            {
-                token:"DdQJ3uz8MDwncPO9p7ATolgEvSzYFr0V",
-                service:
-                {
-                    needs_user_id:1,
-                    from:{
-                        name:"幸田駅",
-                        address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
-                        lon:34.859583,
-                        lat:137.164640,
-                        time:"2017-12-02T12:01:03+09:00"
-                    },
-                    to:{
-                        name:"安楽寺",
-                        address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
-                        lon:34.859091,
-                        lat:137.172021
-                    },
-                    passengers: [],
-                    cargos:[
-                        {size:"big", owner_user_id:3},
-                        {size:"small", owner_user_id:3}
-                    ],
-                    funtions:["express"]
-                }
-            }
-        ]
-
-+ Response 201 (application/json)
-
-        [
-             {
-                needs_user_id:1,
-                needs_type:"passenger",
-                needs_id:1324, //システムに生成された需要ID
-                from:{
-                    name:"幸田駅",
-                    address:"愛知県額田郡幸田町大字芦谷字幸田 幸田駅",
-                    lon:34.859583,
-                    lat:137.164640,
-                    time:"2017-12-02T12:01:03+09:00",
-                    estimated_time:"2017-12-02T12:03:12+09:00" //予想発車時間
-                },
-                estimated_distance:1538, //予想距離メートル
-                route:[　//スマホ地図表示用
-                    {lon:34.5463583,lat:137.244540},
-                    {lon:34.7578583,lat:137.356740}
-                ],
-                to:{
-                    name:"安楽寺",
-                    address:"愛知県額田郡幸田町大字芦谷字東山26 安楽寺",
-                    lon:34.859091,
-                    lat:137.172021,
-                    estimated_time:"2017-12-02T12:46:27+09:00"　//予想到着時間
-                },
-                vehicle:{ //利用車両
-                    vehicle_id:1,
-                    model:"白いトヨタプリュス",
-                    plate:"幸田001あ001",
-                },
-                passengers: [
-                    {type:"adult"},
-                    {type:"adult"},
-                    {type:"child"}
-                ],
-                cargos:[
-                    {size:"big", owner_user_id:1},
-                    {size:"big", owner_user_id:1},
-                    {size:"small", owner_user_id:1}
-                ],
-                prices:[　//予算値段
-                    {type:"passager", price:4720},
-                    {type:"freight", price:1200}
-                ],
-                funtions:["sharing", "remote_meeting", "movie"]
-            }
-        ]
-    
-## Get All Vehicles Status [/api/vehicle/getall?token={token}]
-### Get All Vehicles Status [GET]
-This API gets all vehicles status including id, plate, status(empty, service, park, inspection) and current coordinates and orientation.
-Notice: speed is m/s, orientation is in [0, 360) accoroding to 0 for north, 90 for east, 180 for south, 270 for west.
-+ Parameters
-    + token (string) - User login token
-+ Response 200 (application/json)
-
-        {
-            "code": 0,
-            "results": {
-                "viecles": [
-                    {
-                        "id": 1,
-                        "plate": "名古屋021あ021",
-                        "lat": 34.845131636363625,
-                        "lon": 137.16038205454552,
-                        "speed": 8.0,
-                        "status": "empty",
-                        "orientation": 84.30252574402982,
-                        "description": "黄色プリウスα",
-                        "route": {
-                              "dep": {
-                                "lat": 34.84498235454545,
-                                "lon": 137.15869463636363
-                              },
-                              "des": {
-                                "lat": 34.874715,
-                                "lon": 137.158208
-                              },
-                              "distance": 4046.5607667015584,
-                              "route": [
-                                {
-                                  "lat": 34.8450053,
-                                  "lon": 137.159016,
-                                  "distance": 0,
-                                  "rate": 0.0
-                                },
-                                {
-                                  "lat": 34.8450932,
-                                  "lon": 137.1599968,
-                                  "distance": 29.50193567961456,
-                                  "rate": 0.007290619709057834
-                                }
-                              ]
-                        }
-                    }
-                ]
-            }
-        }
-
-## Get One Vehicles Status by Id [/api/vehicle/get?token={token}&id={id}]
-### Get One Vehicles Status by Id [GET]
-+ Parameters
-    + token (string) - User login token
-    + id (int) - viecle id
-+ Response 200 (application/json)
-
-        {
-            "status": "OK",
-            "results": {
-                "viecle": {
-                        "id": 1,
-                        "plate": "名古屋021あ021",
-                        "lat": 34.845131636363625,
-                        "lon": 137.16038205454552,
-                        "speed": 8.0,
-                        "status": "empty",
-                        "orientation": 84.30252574402982,
-                        "description": "黄色プリウスα",
-                        "route": {
-                              "dep": {
-                                "lat": 34.84498235454545,
-                                "lon": 137.15869463636363
-                              },
-                              "des": {
-                                "lat": 34.874715,
-                                "lon": 137.158208
-                              },
-                              "distance": 4046.5607667015584,
-                              "route": [
-                                {
-                                  "lat": 34.8450053,
-                                  "lon": 137.159016,
-                                  "distance": 0,
-                                  "rate": 0.0
-                                },
-                                {
-                                  "lat": 34.8450932,
-                                  "lon": 137.1599968,
-                                  "distance": 29.50193567961456,
-                                  "rate": 0.007290619709057834
-                                }
-                              ]
-                        }
-                    }
-            }
+            None
         }
