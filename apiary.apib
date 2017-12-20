@@ -34,49 +34,235 @@ Service Management System for Synergic Mobility
     <tr><td>4</td><td>ARRIVING</td><td>到着</td></tr>
 <table/>
 
-# Sample code
-### Socket Connection Example
-<code>
-    $('#connect_websocket').click(function () {
-        if (window.s) {
-            window.s.close()
-        }
-        var socket = new WebSocket("ws://" + window.location.host + "/io/phone");
-        socket.onopen = function () {
-            console.log('WebSocket connected.');//Connected to Server via WebSocket
-            $('#messagecontainer').prepend('Log: WebSocket open');
-        };
-        socket.onmessage = function (e) {
-            console.log('message: ' + e.data);//Print data from server
-            $('#messagecontainer').prepend('Data:' + e.data);
-        };
-        // Call onopen directly if socket is already open
-        if (socket.readyState == WebSocket.OPEN) socket.onopen();
-        window.s = socket;
-    });
-    $('#send_message').click(function () {
-        //if not connected to server
-        if (!window.s || window.s.readyState != WebSocket.OPEN) {
-            alert("websocket is not connected.");
-            $('#messagecontainer').prepend('Log: websocket is not connected.');
-        } else {
-            window.s.send($('#message').val());//send message via
-        }
-    });
-    $('#close_websocket').click(function () {
-        if (window.s) {
-            window.s.close();//close connection
-            $('#messagecontainer').prepend('Log: WebSocket Closed');
-            console.log('WebSocket Closed');
-        }
-    });
-</code>
+## login client->sms [/sms/io/login]
+### User Login (Get Token) [PUT]
++ Request (json)
 
-# Web Socket
-## User Login
+        {
+            username:"meida",
+            password:"password"
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"login",
+            results:{
+                token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W"
+            }
+        }
 
 
-## Web Socket [/io]
+## SIO Built Demand client->sms [/sms/io/builtdemand]
+Generate a demand_id when client send a request to sms.
+Then it will be sent to fleet.
+### Built Demand (Call A Car) [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            from:{lat: 34.859583, lon: 137.164640},
+            to:{lat: 34.859091, lon: 137.172021},
+            passengers:[{type:"adult"}]
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"builtdemand",
+            results:{
+                demand_id:1
+            }
+        }
+
+## SIO Built Demand sms->fleet [/fleet/io/demand]
+### Built Demand to Fleet [PUT]
+
++ Request (json)
+
+        {
+            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
+            demand_id:1,
+            user_id:1,
+            from:{lat: 34.859583, lon: 137.164640},
+            to:{lat: 34.859091, lon: 137.172021},
+            passengers:[{type:"adult"}]
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"demand",
+            results:{
+                vehicle_id:1,
+                user_id:1,
+                demand_id:1
+            }
+        }
+        
+## SIO Cancel Demand client->sms [/sms/io/canceldemand]
+### Cancel Demand [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            demand_id:1
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"canceldemand",
+            results:{
+                vehicle_id:1
+            }
+        }
+        
+## SIO Cancel Demand sms->fleet [/fleet/io/canceldemand]
+### Cancel Demand [PUT]
+
++ Request (json)
+
+        {
+            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
+            demand_id:1
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"canceldemand",
+            results:{
+                demand_id:1
+            }
+        }
+        
+## SIO Change Demand Route client->sms [/sms/io/changedemandroute]
+Change Demand Route includes go another place and debus.
+If debus, just send the current location.
+
+### Change Demand Route [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            demand_id:1,
+            to:{lat: 34.741091, lon: 137.251021},
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"changedemandroute",
+            results:{
+                demand_id:1
+            }
+        }
+
+## SIO Change Demand Route sms->fleet [/fleet/io/changedemandroute]
+Change Demand Route includes go another place and debus.
+If debus, just send the current location.
+
+### Change Demand Route [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            demand_id:1,
+            to:{lat: 34.741091, lon: 137.251021},
+        }
+        
++ Response 0
+
+        {
+            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
+            act:"changedemandroute",
+            results:{
+                demand_id:1
+            }
+        }
+
+
+## SIO Viecle Status fleet->sms [/sms/io/viecle_status]
+Monitor viecles in SMS
+
+### Viecle Status [PUT]
++ Request (json)
+
+        {
+            "key":
+            "vehicles": [
+                {
+                    "vehicle_id": 1,
+                    "plate": "名古屋021あ021",
+                    "lat": 34.887179350000004, //current lat
+                    "lon": 137.17469457500002, //current lon
+                    "speed": 8, // m/s
+                    "status": 0, //see vehcle status codes
+                    "orientation": 0.6651332923552786,
+                    "description": "黄色プリウスα",
+                    "demand_ids":[]
+                },
+                {
+                    "vehicle_id": 2,
+                    "plate": "名古屋001あ001",
+                    "lat": 34.89015292727274,
+                    "lon": 137.17468727272725,
+                    "speed": 8,
+                    "status": 1,
+                    "orientation": 342.308506993808,
+                    "description": "赤いプリウスα",
+                    "demand_ids":[1] //what demends are taking now
+                }
+            ]
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## The following is draft ! [/io]
+
+
 Web socket has only one address(URL).
 Everything in following popup.
 
