@@ -40,7 +40,6 @@ Service Management System for Synergic Mobility
     <tr><th>Passenger Type</th><th>Description</th></tr>
     <tr><td>adult</td><td></td></tr>
     <tr><td>child</td><td></td></tr>
-    <tr><td>baby</td><td></td></tr>
 <table/>
 
 # Service Type List
@@ -51,6 +50,9 @@ Service Management System for Synergic Mobility
     <tr><td>private-ride</td><td>Express</td></tr>
     <tr><td>movie</td><td>PATROL</td></tr>
 <table/>
+
+
+# Group client->sms
 
 ## SIO Login client->sms [/sms/io/login]
 ### User Login (Get Token) [PUT]
@@ -72,6 +74,9 @@ Service Management System for Synergic Mobility
         }
 
 
+
+
+
 ## SIO Built Demand client->sms [/sms/io/builtdemand]
 Generate a demand_id when client send a request to sms.
 Then it will be sent to fleet.
@@ -84,6 +89,7 @@ Then it will be sent to fleet.
             from:{lat: 34.859583, lon: 137.164640},
             to:{lat: 34.859091, lon: 137.172021},
             passengers:[{type:"adult"}],
+            
             services:[{type:"share-ride"},{type:"movie"}] //private-ride
         }
         
@@ -97,31 +103,7 @@ Then it will be sent to fleet.
             }
         }
 
-## SIO Built Demand sms->fleet [/fleet/io/demand]
-### Built Demand to Fleet [PUT]
 
-+ Request (json)
-
-        {
-            key:"W90gbO9DBKWbMiLYv8hp5FUuC22W9a7W",
-            from:{lat: 34.859583, lon: 137.164640},
-            to:{lat: 34.859091, lon: 137.172021},
-            passengers:[{type:"adult"}],
-            services:[{type:"share-ride"},{type:"movie"}], //private-ride
-            demand_id:1
-        }
-        
-+ Response 0
-
-        {
-            code:0,
-            act:"demand",
-            results:{
-                vehicle_id:1,
-                demand_id:1
-            }
-        }
-        
 ## SIO Cancel Demand client->sms [/sms/io/canceldemand]
 ### Cancel Demand [PUT]
 
@@ -141,6 +123,36 @@ Then it will be sent to fleet.
                 demand_id:1
             }
         }
+
+        
+# Group sms->fleet
+
+
+## SIO Built Demand sms->fleet [/fleet/io/demand]
+### Built Demand to Fleet [PUT]
+
++ Request (json)
+
+        {
+            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
+            from:{lat: 34.859583, lon: 137.164640},
+            to:{lat: 34.859091, lon: 137.172021},
+            passengers:[{type:"adult"}],
+            services:[{type:"share-ride"},{type:"movie"}], //private-ride
+            demand_id:1
+        }
+        
++ Response 0
+
+        {
+            code:0,
+            act:"demand",
+            results:{
+                vehicle_id:1,
+                demand_id:1
+            }
+        }
+        
         
 ## SIO Cancel Demand sms->fleet [/fleet/io/canceldemand]
 ### Cancel Demand [PUT]
