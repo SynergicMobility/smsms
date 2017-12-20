@@ -54,7 +54,7 @@ Service Management System for Synergic Mobility
 
 # Group client->sms
 
-## SIO Login client->sms [/sms/io/login]
+## SIO Login [/io/login]
 ### User Login (Get Token) [PUT]
 + Request (json)
 
@@ -74,10 +74,7 @@ Service Management System for Synergic Mobility
         }
 
 
-
-
-
-## SIO Built Demand client->sms [/sms/io/builtdemand]
+## SIO Built Demand [/io/builtdemand]
 Generate a demand_id when client send a request to sms.
 Then it will be sent to fleet.
 ### Built Demand (Call A Car) [PUT]
@@ -104,7 +101,7 @@ Then it will be sent to fleet.
         }
 
 
-## SIO Cancel Demand client->sms [/sms/io/canceldemand]
+## SIO Cancel Demand [/io/canceldemand]
 ### Cancel Demand [PUT]
 
 + Request (json)
@@ -128,7 +125,7 @@ Then it will be sent to fleet.
 # Group sms->fleet
 
 
-## SIO Built Demand sms->fleet [/fleet/io/demand]
+## SIO Built Demand [/io/demand]
 ### Built Demand to Fleet [PUT]
 
 + Request (json)
