@@ -21,6 +21,7 @@ Service Management System for Synergic Mobility
     <tr><td>-9</td><td>ALL</td><td>Token is wrong or expired</td></tr>
     <tr><td>-10</td><td>ALL</td><td>User is not logging in</td></tr>
     <tr><td>-11</td><td>ALL</td><td>No permission for this operation</td></tr>
+    <tr><td>-12</td><td>ALL</td><td>Token is wrong</td></tr>
 <table/>
 
 # Vehicle Status Code List
@@ -32,6 +33,15 @@ Service Management System for Synergic Mobility
     <tr><td>2</td><td>WAITING</td><td>待ち</td></tr>
     <tr><td>3</td><td>GOING</td><td>賃走</td></tr>
     <tr><td>4</td><td>ARRIVING</td><td>到着</td></tr>
+<table/>
+
+# Demand Status Code List
+
+<table>
+    <tr><th>code</th><th>Status</th><th>Description</th></tr>
+    <tr><td>0</td><td>CREATE</td><td></td></tr>
+    <tr><td>1</td><td>CANCEL</td><td></td></tr>
+    <tr><td>2</td><td>FINISH</td><td></td></tr>
 <table/>
 
 # Passenger Type List
@@ -74,7 +84,7 @@ Service Management System for Synergic Mobility
         }
 
 
-## SIO Built Demand [/io/builtdemand]
+## SIO Built Demand [/io/createdemand]
 Generate a demand_id when client send a request to sms.
 Then it will be sent to fleet.
 ### Built Demand (Call A Car) [PUT]
@@ -86,7 +96,6 @@ Then it will be sent to fleet.
             from:{lat: 34.859583, lon: 137.164640},
             to:{lat: 34.859091, lon: 137.172021},
             passengers:[{type:"adult"}],
-            
             services:[{type:"share-ride"},{type:"movie"}] //private-ride
         }
         
@@ -94,7 +103,7 @@ Then it will be sent to fleet.
 
         {
             code:0,
-            act:"builtdemand",
+            act:"createdemand",
             results:{
                 demand_id:1 //important
             }
@@ -121,7 +130,7 @@ Then it will be sent to fleet.
             }
         }
 
-## SIO Change Demand Route [/sms/io/changedemandroute]
+## SIO Change Demand Route [/io/changedemandroute]
 Change Demand Route includes go another place and debus.
 If debus, just send the current location.
 
@@ -145,10 +154,22 @@ If debus, just send the current location.
             }
         }
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 # Group sms->fleet
 
 
-## SIO Built Demand [/io/demand]
+## SIO Built Demand [/io/createdemand]
 ### Built Demand to Fleet [PUT]
 
 + Request (json)
@@ -166,7 +187,7 @@ If debus, just send the current location.
 
         {
             code:0,
-            act:"demand",
+            act:"createdemand",
             results:{
                 vehicle_id:1,
                 demand_id:1
@@ -254,9 +275,59 @@ If debus, just send the current location.
             }
         }
 
-#Group fleet->sms
+# Group fleet->sms
 
-## SIO Viecle Status fleet->sms & fleet->client [/io/viecle_status]
+## SIO Viecle Status [/io/viecle_status]
+Monitor viecles in SMS, and send viecle status to client
+
+### Viecle Status [PUT]
++ Request (json)
+
+        {
+            
+            "vehicles": [
+                {
+                    "vehicle_id": 1,
+                    "plate": "名古屋021あ021",
+                    "lat": 34.887179350000004, //current lat
+                    "lon": 137.17469457500002, //current lon
+                    "speed": 8, // m/s
+                    "status": 0, //see vehcle status codes
+                    "orientation": 0.6651332923552786,
+                    "description": "黄色プリウスα",
+                    "demand_ids":[],
+                    "route":[] //dont show route when patrol (status == 0)
+                },
+                {
+                    "vehicle_id": 2,
+                    "plate": "名古屋001あ001",
+                    "lat": 34.89015292727274,
+                    "lon": 137.17468727272725,
+                    "speed": 8,
+                    "status": 1, //noteiced: not patrol here so demand_ids exists
+                    "orientation": 342.308506993808,
+                    "description": "赤いプリウスα",
+                    "demand_ids":[1], //what demends are taking now
+                    "route":[
+                        [lat, lon, status_code],
+                        [lat, lon, status_code],
+                        [lat, lon, status_code]
+                    ] //send route with status_code
+                }
+            ]
+        }
+        
++ Response 0
+
+        {
+            None
+        }
+  
+        
+        
+# Group fleet->client
+
+## SIO Viecle Status [/io/viecle_status]
 Monitor viecles in SMS, and send viecle status to client
 
 ### Viecle Status [PUT]
@@ -301,5 +372,3 @@ Monitor viecles in SMS, and send viecle status to client
         {
             None
         }
-        
-#Group fleet->client
