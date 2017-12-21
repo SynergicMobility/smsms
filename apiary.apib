@@ -82,7 +82,6 @@ Service Management System for Synergic Mobility
 
         {
             code:0,
-            act:"login",
             results:{
                 token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W"
             }
@@ -108,7 +107,6 @@ Then it will be sent to fleet.
 
         {
             code:0,
-            act:"createdemand",
             results:{
                 demand_id:1 //important
             }
@@ -129,7 +127,6 @@ Then it will be sent to fleet.
 
         {
             code:0,
-            act:"canceldemand",
             results:{
                 demand_id:1
             }
@@ -146,14 +143,13 @@ If debus, just send the current location.
         {
             token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
             demand_id:1,
-            to:{lat: 34.741091, lon: 137.251021},
+            to:{lat: 34.741091, lon: 137.251021}
         }
         
 + Response 0
 
         {
             code:0,
-            act:"changedemandroute",
             results:{
                 demand_id:1
             }
@@ -192,7 +188,6 @@ If debus, just send the current location.
 
         {
             code:0,
-            act:"createdemand",
             results:{
                 vehicle_id:1,
                 demand_id:1
@@ -214,7 +209,6 @@ If debus, just send the current location.
 
         {
             code:0,
-            act:"canceldemand",
             results:{
                 demand_id:1
             }
@@ -274,7 +268,6 @@ If debus, just send the current location.
 
         {
             code:0,
-            act:"changedemandroute",
             results:{
                 demand_id:1
             }
