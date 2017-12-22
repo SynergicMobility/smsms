@@ -220,31 +220,15 @@ When vehicle is waiting status, phone send depart to SMS and Fleet
 + Request (json)
 
         {
-            token:"uO9DBKWbMiLYvCW90gb8hp5FU22W9a7W",
             demand_id:1
         }
         
 + Response 0
 
         {
-            None
-        }
-
-## SIO Depart [/sleet/io/depart]
-
-### Depart [PUT]
-
-+ Request (json)
-
-        {
-            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
-            demand_id:1
-        }
-        
-+ Response 0
-
-        {
-            None
+            code:0,
+            results:{
+            }
         }
     
 
@@ -257,7 +241,6 @@ If debus, just send the current location.
 + Request (json)
 
         {
-            key:"YvCW909DBKWbMigb8hp5uOLFU22W9a7W",
             demand_id:1,
             to:{lat: 34.741091, lon: 137.251021},
         }
